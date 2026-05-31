@@ -1,8 +1,10 @@
 package sigarka.scenes;
 
 import java.io.InputStream;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,7 +18,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import javafx.scene.Node;
 import sigarka.View.AppStyle;
 import sigarka.View.IconLoader;
 
@@ -165,11 +166,10 @@ public class MenuSc {
             btnHitung.setGraphic(createIconWrapper(IconLoader.loadSvgIcon("/Assets/icons/Hitunggaji.svg", AppStyle.NOTSOWHITE_COLOR, 0.6)));
             btnSlip.setGraphic(createIconWrapper(IconLoader.loadSvgIcon("/Assets/icons/SlipGaji.svg", AppStyle.BLUE_COLOR, 0.6)));
             
-            // Ganti konten (Placeholder sementara karena belum ada SlipGajiSc)
+            // Ganti konten
             contentArea.getChildren().clear();
-            Label placeholderText = new Label("Area Tampilan Slip Gaji");
-            placeholderText.setStyle("-fx-font-size: 20px; -fx-text-fill: gray;");
-            contentArea.getChildren().add(placeholderText);
+            sigarka.scenes.slip.SlipGajiSc slipSc = new sigarka.scenes.slip.SlipGajiSc(stage);
+            contentArea.getChildren().add(slipSc.getView());
         });
 
         // === ROOT LAYOUT ===
