@@ -1,5 +1,7 @@
 package sigarka.scenes.slip;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javafx.geometry.Insets;
@@ -12,12 +14,11 @@ import javafx.print.PrinterJob;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
@@ -26,10 +27,10 @@ import sigarka.View.AppStyle;
 public class DesainSlip {
 
     public static VBox buatVisualSlip(Map<String, Object> data) {
-        VBox slip = new VBox(15);
-        // Margin 3cm standar (113px)
-        slip.setPadding(new Insets(100, 90, 100, 90));
-        slip.setStyle("-fx-background-color: white;");
+        VBox slip = new VBox(20); 
+        slip.setPadding(new Insets(50, 60, 50, 60));
+        
+        slip.setStyle("-fx-background-color: white; -fx-border-color: " + AppStyle.BLUE_COLOR + "; -fx-border-width: 2.5; -fx-border-insets: 15;");
         slip.setMinWidth(595); 
         slip.setMinHeight(842); 
         slip.setAlignment(Pos.TOP_CENTER);
@@ -39,167 +40,197 @@ public class DesainSlip {
             return slip;
         }
 
-        // === LOGO (CENTERED) ===
+        // === LOGO ===
         try {
             Image logoImg = new Image(DesainSlip.class.getResourceAsStream("/Assets/images/Logo/logo_login.png"));
             ImageView logoView = new ImageView(logoImg);
-            logoView.setFitWidth(140);
+            logoView.setFitWidth(160);
             logoView.setPreserveRatio(true);
             slip.getChildren().add(logoView);
         } catch (Exception e) {
-            System.out.println("Logo tidak ditemukan");
+            System.out.println("Logo tidak ditemukan.");
         }
 
-        // === HEADER (CENTERED) ===
-        VBox headerBox = new VBox(3);
+        // === HEADER ===
+        VBox headerBox = new VBox(8);
         headerBox.setAlignment(Pos.CENTER);
 
         Label lblJudul = new Label("SLIP GAJI KARYAWAN");
-        Font gloock = Font.loadFont(DesainSlip.class.getResourceAsStream("/Assets/Fonts/Gloock-Regular.ttf"), 24);
+        Font gloock = Font.loadFont(DesainSlip.class.getResourceAsStream("/Assets/Fonts/Gloock-Regular.ttf"), 26);
         if (gloock != null) lblJudul.setFont(gloock);
-        else lblJudul.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        else lblJudul.setStyle("-fx-font-size: 26px; -fx-font-weight: bold;");
         lblJudul.setStyle(lblJudul.getStyle() + "-fx-text-fill: " + AppStyle.BLUE_COLOR + ";");
 
-        Label lblPeriode = new Label("Periode: " + getString(data, "periode", "-"));
-        lblPeriode.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+        Label lblPeriode = new Label("PERIODE : " + getString(data, "periode", "-").toUpperCase());
+        lblPeriode.setStyle("-fx-background-color: " + AppStyle.TOSKA_COLOR + "; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 5 25; -fx-background-radius: 15; -fx-font-size: 14px;");
 
         headerBox.getChildren().addAll(lblJudul, lblPeriode);
         slip.getChildren().add(headerBox);
 
-        // Space
-        Region spacer1 = new Region(); spacer1.setMinHeight(30);
+        Region spacer1 = new Region(); spacer1.setMinHeight(15);
         slip.getChildren().add(spacer1);
 
-        // === INFO KARYAWAN (LEFT) ===
-        GridPane infoGrid = new GridPane();
-        infoGrid.setHgap(10);
-        infoGrid.setVgap(6);
-        infoGrid.setAlignment(Pos.CENTER_LEFT);
+        // === INFO KARYAWAN ===
+        VBox infoBox = new VBox(5);
+        infoBox.setAlignment(Pos.CENTER_LEFT);
 
-        tambahBarisInfo(infoGrid, "Nama", getString(data, "nama", "-"), 0);
-        tambahBarisInfo(infoGrid, "ID Karyawan", getString(data, "id", "-"), 1);
-        
         String tipe = getString(data, "tipe", "Tetap");
-        tambahBarisInfo(infoGrid, "Tipe", tipe, 2);
-
-        if ("Karyawan Tetap".equals(tipe)) {
-            tambahBarisInfo(infoGrid, "Divisi", getString(data, "divisi", "-"), 3);
-            tambahBarisInfo(infoGrid, "Jabatan", getString(data, "jabatan", "-"), 4);
-        }
-
-        slip.getChildren().add(infoGrid);
-
-        // Space
-        Region spacer2 = new Region(); spacer2.setMinHeight(25);
-        slip.getChildren().add(spacer2);
-
-        // === RINCIAN GAJI (TABLE) ===
-        VBox areaTabel = new VBox(10);
-        Line l1 = new Line(0, 0, 415, 0); l1.setStrokeWidth(1.5);
+        String tipeLabel = "Karyawan Tetap".equals(tipe) ? " (Tetap)" : " (Kontrak)";
         
-        HBox headerTabel = new HBox(0);
-        Label h1 = new Label("DESKRIPSI PENDAPATAN"); h1.setPrefWidth(280);
-        Label h2 = new Label("JUMLAH (RP)");
-        headerTabel.getChildren().addAll(h1, h2);
-        headerTabel.setStyle("-fx-font-weight: bold; -fx-font-size: 12px;");
+        infoBox.getChildren().addAll(
+            buatBarisInfo("Nama Karyawan:", getString(data, "nama", "-")),
+            buatBarisInfo("ID Karyawan:", getString(data, "id", "-")),
+            buatBarisInfo("Jabatan:", getString(data, "jabatan", "-") + tipeLabel)
+        );
+        slip.getChildren().add(infoBox);
 
-        VBox listPendapatan = new VBox(8);
+        // === DATA GAJI ===
         double gajiPokok = getDouble(data, "gaji_pokok");
         double tunjangan = getDouble(data, "tunjangan_kesehatan");
         double bonusBadge = getDouble(data, "bonus_badge");
         int lembur = getInt(data, "lembur");
         double bonusLembur = lembur * 100000.0;
+        
+        int alpa = getInt(data, "alpa");
+        int izin = getInt(data, "izin");
+        double potAlpa = alpa * 150000.0;
+        double potIzin = izin * 75000.0;
+        
+        double totalPendapatan = 0;
+        double totalPotongan = 0;
 
+        // === TABEL PENDAPATAN ===
+        List<String[]> pendRows = new ArrayList<>();
         if ("Karyawan Tetap".equals(tipe)) {
-            listPendapatan.getChildren().add(buatBarisGaji("Gaji Pokok", gajiPokok));
-            listPendapatan.getChildren().add(buatBarisGaji("Tunjangan Kesehatan", tunjangan));
-            listPendapatan.getChildren().add(buatBarisGaji("Bonus Lembur (" + lembur + " Hari)", bonusLembur));
+            pendRows.add(new String[]{"Gaji Pokok", formatRp(gajiPokok)});
+            pendRows.add(new String[]{"Tunjangan Kesehatan", formatRp(tunjangan)});
+            pendRows.add(new String[]{"Bonus Lembur", formatRp(bonusLembur)});
             
-            VBox badgeBox = new VBox(1);
-            badgeBox.getChildren().add(buatBarisGaji("Bonus Badge", bonusBadge));
+            String kat = getKategoriBonus(lembur, alpa, izin);
+            String badgeLable = kat.isEmpty() ? "Bonus Badge" : "Bonus Badge (" + kat + ")";
+            pendRows.add(new String[]{badgeLable, formatRp(bonusBadge)});
             
-            String kat = getKategoriBonus(lembur, getInt(data, "alpa"), getInt(data, "izin"));
-            if (!kat.isEmpty()) {
-                Label lblKat = new Label("(" + kat + ")");
-                lblKat.setStyle("-fx-font-size: 10px; -fx-font-style: italic; -fx-text-fill: #555;");
-                lblKat.setPadding(new Insets(0, 0, 0, 5));
-                badgeBox.getChildren().add(lblKat);
-            }
-            listPendapatan.getChildren().add(badgeBox);
+            totalPendapatan = gajiPokok + tunjangan + bonusLembur + bonusBadge;
         } else {
             double tarif = getDouble(data, "tarif_per_jam");
-            listPendapatan.getChildren().add(buatBarisGaji("Tarif Kerja / Jam", tarif));
-            listPendapatan.getChildren().add(buatBarisGaji("Tunjangan Kesehatan", 0));
-            listPendapatan.getChildren().add(buatBarisGaji("Bonus Lembur", 0));
-            listPendapatan.getChildren().add(buatBarisGaji("Bonus Badge", 0));
+            pendRows.add(new String[]{"Tarif Kerja / Jam", formatRp(tarif)});
+            pendRows.add(new String[]{"Tunjangan Kesehatan", formatRp(0)});
+            pendRows.add(new String[]{"Bonus Lembur", formatRp(0)});
+            pendRows.add(new String[]{"Bonus Badge", formatRp(0)});
+            
+            totalPendapatan = getDouble(data, "gaji_bersih");
         }
+        VBox tabelPendapatan = buatTabel("Pendapatan", "Pendapatan", "Jumlah (IDR)", pendRows, new String[]{"Total Pendapatan", formatRp(totalPendapatan)});
 
-        Line l2 = new Line(0, 0, 415, 0);
-        
-        VBox listPotongan = new VBox(8);
-        Label h3 = new Label("POTONGAN KEHADIRAN"); h3.setStyle("-fx-font-weight: bold; -fx-font-size: 12px;");
-        
+        // === TABEL POTONGAN ===
+        List<String[]> potRows = new ArrayList<>();
         if ("Karyawan Tetap".equals(tipe)) {
-            int alpa = getInt(data, "alpa");
-            int izin = getInt(data, "izin");
-            listPotongan.getChildren().addAll(
-                buatBarisGaji("Potongan Alpa (" + alpa + " Kali)", alpa * 150000.0),
-                buatBarisGaji("Potongan Izin (" + izin + " Kali)", izin * 75000.0)
-            );
+            potRows.add(new String[]{"Potongan Alfa", formatRp(potAlpa)});
+            potRows.add(new String[]{"Potongan Izin", formatRp(potIzin)});
+            totalPotongan = potAlpa + potIzin;
         } else {
-            listPotongan.getChildren().addAll(buatBarisGaji("Potongan Alpa", 0), buatBarisGaji("Potongan Izin", 0));
+            potRows.add(new String[]{"Potongan Alfa", formatRp(0)});
+            potRows.add(new String[]{"Potongan Izin", formatRp(0)});
+            totalPotongan = 0;
         }
+        VBox tabelPotongan = buatTabel("Potongan", "Potongan", "Jumlah (IDR)", potRows, new String[]{"Total Potongan", formatRp(totalPotongan)});
 
-        Line l3 = new Line(0, 0, 415, 0); l3.setStrokeWidth(1.5);
-        
-        HBox rowGajiBersih = new HBox(0);
-        Label lblTeksTotal = new Label("TOTAL GAJI BERSIH"); lblTeksTotal.setPrefWidth(280);
-        lblTeksTotal.setStyle("-fx-font-weight: bold; -fx-font-size: 13px;");
-        Label lblAngkaTotal = new Label("Rp " + String.format("%,.0f", getDouble(data, "gaji_bersih")));
-        lblAngkaTotal.setStyle("-fx-font-weight: bold; -fx-font-size: 13px;");
-        rowGajiBersih.getChildren().addAll(lblTeksTotal, lblAngkaTotal);
+        // === TABEL GAJI BERSIH ===
+        List<String[]> bersihRows = new ArrayList<>();
+        bersihRows.add(new String[]{"Gaji Bersih", formatRp(getDouble(data, "gaji_bersih"))});
+        VBox tabelGajiBersih = buatTabel("Gaji Bersih", "Gaji Bersih", "Jumlah (IDR)", bersihRows, null);
 
-        areaTabel.getChildren().addAll(l1, headerTabel, listPendapatan, l2, h3, listPotongan, l3, rowGajiBersih);
-        slip.getChildren().add(areaTabel);
-
-        // === FOOTER (SIGNATURE) ===
-        Region pushBottom = new Region(); VBox.setVgrow(pushBottom, Priority.ALWAYS);
-        slip.getChildren().add(pushBottom);
-
-        HBox footerContainer = new HBox();
-        footerContainer.setAlignment(Pos.BOTTOM_RIGHT);
-        
-        VBox signBox = new VBox(50);
-        signBox.setAlignment(Pos.CENTER);
-        Label lblTanda = new Label("Tertanda,");
-        Label lblNamaMgr = new Label("( Manager HRD )");
-        lblNamaMgr.setStyle("-fx-font-weight: bold;");
-        signBox.getChildren().addAll(lblTanda, lblNamaMgr);
-        
-        footerContainer.getChildren().add(signBox);
-        slip.getChildren().add(footerContainer);
+        slip.getChildren().addAll(tabelPendapatan, tabelPotongan, tabelGajiBersih);
 
         return slip;
     }
 
-    private static void tambahBarisInfo(GridPane grid, String label, String value, int row) {
-        Label lbl = new Label(label);
-        lbl.setMinWidth(100);
-        lbl.setStyle("-fx-font-weight: bold; -fx-font-size: 12px;");
-        grid.add(lbl, 0, row);
-        Label val = new Label(": " + value);
-        val.setStyle("-fx-font-size: 12px;");
-        grid.add(val, 1, row);
+    // === HELPER METHODS ===
+
+    private static HBox buatBarisInfo(String label, String value) {
+        HBox box = new HBox(5);
+        Label l = new Label(label);
+        l.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: black;");
+        Label v = new Label(value);
+        v.setStyle("-fx-font-size: 14px; -fx-text-fill: black;");
+        box.getChildren().addAll(l, v);
+        return box;
+    }
+
+    private static VBox buatTabel(String judulTable, String headerKiri, String headerKanan, List<String[]> dataRows, String[] totalRow) {
+        VBox container = new VBox(5);
+        
+        Label judul = new Label(judulTable);
+        judul.setStyle("-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: black;");
+        
+        GridPane grid = new GridPane();
+        grid.setStyle("-fx-border-color: #37474f; -fx-border-width: 1.5; -fx-background-color: white;");
+        
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setPercentWidth(60);
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setPercentWidth(40);
+        grid.getColumnConstraints().addAll(col1, col2);
+        
+        Label h1 = new Label(headerKiri);
+        h1.setMaxWidth(Double.MAX_VALUE); h1.setAlignment(Pos.CENTER);
+        h1.setStyle("-fx-background-color: " + AppStyle.TOSKA_COLOR + "; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 6 10; -fx-border-color: #37474f; -fx-border-width: 0 1.5 1.5 0; -fx-font-size: 14px;");
+        
+        Label h2 = new Label(headerKanan);
+        h2.setMaxWidth(Double.MAX_VALUE); h2.setAlignment(Pos.CENTER);
+        h2.setStyle("-fx-background-color: " + AppStyle.TOSKA_COLOR + "; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 6 10; -fx-border-color: #37474f; -fx-border-width: 0 0 1.5 0; -fx-font-size: 14px;");
+        
+        grid.add(h1, 0, 0);
+        grid.add(h2, 1, 0);
+        
+        int row = 1;
+        for (String[] rowData : dataRows) {
+            Label cell1 = new Label(rowData[0]);
+            cell1.setMaxWidth(Double.MAX_VALUE);
+            
+            boolean isLastData = (row == dataRows.size());
+            int borderBottom = (isLastData && totalRow == null) ? 0 : 1;
+            
+            cell1.setStyle("-fx-padding: 5 10; -fx-border-color: #9e9e9e; -fx-border-width: 0 1.5 " + borderBottom + " 0; -fx-text-fill: black; -fx-font-size: 14px;");
+            
+            Label cell2 = new Label(rowData[1]);
+            cell2.setMaxWidth(Double.MAX_VALUE); cell2.setAlignment(Pos.CENTER_RIGHT);
+            cell2.setStyle("-fx-padding: 5 10; -fx-border-color: #9e9e9e; -fx-border-width: 0 0 " + borderBottom + " 0; -fx-text-fill: black; -fx-font-size: 14px;");
+            
+            grid.add(cell1, 0, row);
+            grid.add(cell2, 1, row);
+            row++;
+        }
+        
+        if (totalRow != null) {
+            Label t1 = new Label(totalRow[0]);
+            t1.setMaxWidth(Double.MAX_VALUE);
+            t1.setStyle("-fx-padding: 5 10; -fx-border-color: #9e9e9e; -fx-border-width: 0 1.5 0 0; -fx-font-weight: bold; -fx-text-fill: black; -fx-font-size: 14px;");
+            
+            Label t2 = new Label(totalRow[1]);
+            t2.setMaxWidth(Double.MAX_VALUE); t2.setAlignment(Pos.CENTER_RIGHT);
+            t2.setStyle("-fx-padding: 5 10; -fx-font-weight: bold; -fx-text-fill: black; -fx-font-size: 14px;");
+            
+            grid.add(t1, 0, row);
+            grid.add(t2, 1, row);
+        }
+        
+        container.getChildren().addAll(judul, grid);
+        return container;
     }
 
     private static String getKategoriBonus(int lembur, int alpa, int izin) {
         StringBuilder sb = new StringBuilder();
-        if (lembur >= 5) sb.append("Super Productive🔥");
+        if (lembur >= 5) sb.append("Super Productive");
         if (alpa == 0 && izin == 0) {
             if (sb.length() > 0) sb.append(", ");
-            sb.append("Discipline Master👑");
+            sb.append("Discipline Master");
         }
         return sb.toString();
+    }
+
+    private static String formatRp(double amount) {
+        return "Rp " + String.format("%,.0f", amount).replace(',', '.');
     }
 
     private static String getString(Map<String, Object> map, String key, String def) {
@@ -221,16 +252,6 @@ public class DesainSlip {
         return 0;
     }
 
-    private static HBox buatBarisGaji(String nama, double jumlah) {
-        HBox row = new HBox(0);
-        Label lblNama = new Label(nama); lblNama.setPrefWidth(280);
-        lblNama.setStyle("-fx-font-size: 12px;");
-        Label lblJml = new Label("Rp " + String.format("%,.0f", jumlah));
-        lblJml.setStyle("-fx-font-size: 12px;");
-        row.getChildren().addAll(lblNama, lblJml);
-        return row;
-    }
-
     public static void cetakKePrinter(VBox node, Stage stage) {
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job != null) {
@@ -245,7 +266,7 @@ public class DesainSlip {
                 double nH = node.getBoundsInParent().getHeight();
 
                 double scale = Math.min(pW / nW, pH / nH);
-                scale *= 0.96; // Margin aman
+                scale *= 0.96; 
 
                 Scale s = new Scale(scale, scale);
                 node.getTransforms().add(s);
