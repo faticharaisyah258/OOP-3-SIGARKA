@@ -70,6 +70,8 @@ public class HitungGajiSc {
         cbKaryawan.setPromptText("Pilih Karyawan");
         cbKaryawan.setPrefWidth(250);
 
+        kustomisasiComboBox(cbKaryawan);
+
         Label lblPeriode = new Label("Periode:");
         lblPeriode.setStyle("-fx-text-fill: white;");
         TextField periode = new TextField();
@@ -178,4 +180,30 @@ public class HitungGajiSc {
 
         return root;
     }
+
+    private static void kustomisasiComboBox(ComboBox<String> comboBox) {
+        comboBox.setCellFactory(lv -> new javafx.scene.control.ListCell<String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("-fx-background-color: white;");
+                } else {
+                    setText(item);
+                    setStyle("-fx-background-color: white; -fx-text-fill: black;");
+
+                    setOnMouseEntered(e -> {
+                        setStyle("-fx-background-color: " + AppStyle.LIGHTGREEN_COLOR + "; -fx-text-fill: black; -fx-cursor: hand;");
+                    });
+
+                    setOnMouseExited(e -> {
+                        setStyle("-fx-background-color: white; -fx-text-fill: black;");
+                    });
+                }
+            }
+        });
+    }
+
 }
+
