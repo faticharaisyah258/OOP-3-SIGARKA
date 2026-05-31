@@ -45,9 +45,7 @@ public class KelolaKaryawanSc {
         });
 
         // === FONT GLOOCK ===
-
         Font gloockFont = Font.loadFont(KelolaKaryawanSc.class.getResourceAsStream("/Assets/Fonts/Gloock-Regular.ttf"), 20);
-
 
         VBox tetapCard = createCardSection("Daftar Karyawan Tetap", gloockFont);
         VBox.setVgrow(tabelTetap, Priority.ALWAYS); 
@@ -57,9 +55,21 @@ public class KelolaKaryawanSc {
         VBox.setVgrow(tabelKontrak, Priority.ALWAYS);
         kontrakCard.getChildren().add(tabelKontrak);
 
+       
+        HBox tableContainer = new HBox(30); 
+        
+  
+        HBox.setHgrow(tetapCard, Priority.ALWAYS);
+        HBox.setHgrow(kontrakCard, Priority.ALWAYS);
+        
+    
+        VBox.setVgrow(tableContainer, Priority.ALWAYS);
+        
+        tableContainer.getChildren().addAll(tetapCard, kontrakCard);
+
+
         // === TOMBOL ===
         Button btnHapus = new Button("Hapus Karyawan");
-
         btnHapus.setStyle("-fx-background-color: " + AppStyle.BLUE_COLOR + "; -fx-text-fill: white; -fx-background-radius: 2; -fx-padding: 8 20; -fx-font-size: 13px; -fx-cursor: hand; -fx-font-weight: bold;");
 
         Button btnTambah = new Button("Tambahkan Karyawan");
@@ -92,7 +102,7 @@ public class KelolaKaryawanSc {
         HBox buttonBox = new HBox(15, btnHapus, btnTambah);
         buttonBox.setAlignment(Pos.CENTER_LEFT);
 
-        root.getChildren().addAll(tetapCard, kontrakCard, buttonBox);
+        root.getChildren().addAll(tableContainer, buttonBox);
         return root;
     }
 

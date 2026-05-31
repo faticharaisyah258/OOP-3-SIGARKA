@@ -2,6 +2,7 @@ package sigarka.scenes.karyawan;
 
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -9,8 +10,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import sigarka.repository.KaryawanRepo;
+import sigarka.View.AppStyle; 
 
 public class TambahKaryawanSc {
 
@@ -18,21 +21,44 @@ public class TambahKaryawanSc {
         Stage stage = new Stage();
         stage.setTitle("Tambah Data Karyawan");
 
+        // === LAYOUT UTAMA ===
+        VBox root = new VBox(25); 
+        root.setPadding(new Insets(30));
+        root.setAlignment(Pos.CENTER);
+        root.setStyle("-fx-background-color: " + AppStyle.TOSKA_COLOR + ";");
+
+        Label title = new Label("Tambah Karyawan Baru");
+        title.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white;");
+
+        // === GRID FORM ===
         GridPane grid = new GridPane();
-        grid.setPadding(new Insets(20));
-        grid.setVgap(10);
-        grid.setHgap(10);
+        grid.setVgap(15);
+        grid.setHgap(15);
+        grid.setAlignment(Pos.CENTER);
 
         TextField id = new TextField();
         id.setPromptText("ID (5 angka)");
+        id.setPrefWidth(220); 
+
         TextField nama = new TextField();
-        nama.setPromptText("Nama Karyawan");
+        nama.setPromptText("Nama Lengkap");
+        nama.setPrefWidth(220);
 
         ComboBox<String> cbTipe = new ComboBox<>(FXCollections.observableArrayList("Karyawan Tetap", "Karyawan Kontrak"));
+        cbTipe.setPromptText("Pilih Tipe");
+        cbTipe.setPrefWidth(220);
+
         ComboBox<String> cbDivisi = new ComboBox<>(FXCollections.observableArrayList("Bisnis Global dan Pemasaran", "Produksi Kreatif", "Artist & Repertoire"));
+        cbDivisi.setPromptText("Pilih Divisi");
+        cbDivisi.setPrefWidth(220);
+
         ComboBox<String> cbJabatan = new ComboBox<>(FXCollections.observableArrayList("Manager", "Staf"));
+        cbJabatan.setPromptText("Pilih Jabatan");
+        cbJabatan.setPrefWidth(220);
         
         Label lblInfoGaji = new Label("Gaji/Tarif: -");
+  
+        lblInfoGaji.setStyle("-fx-text-fill: white; -fx-font-style: italic;"); 
 
         cbDivisi.setDisable(true);
         cbJabatan.setDisable(true);
@@ -47,13 +73,18 @@ public class TambahKaryawanSc {
         cbDivisi.setOnAction(e -> updateInfoGaji(cbTipe, cbDivisi, cbJabatan, lblInfoGaji));
         cbJabatan.setOnAction(e -> updateInfoGaji(cbTipe, cbDivisi, cbJabatan, lblInfoGaji));
 
-        Button btnSimpan = new Button("Simpan");
+        Button btnSimpan = new Button("Simpan Karyawan");
+        btnSimpan.setMaxWidth(Double.MAX_VALUE); 
+
+        btnSimpan.setStyle("-fx-background-color: " + AppStyle.LIGHTGREEN_COLOR + 
+                           "; -fx-text-fill: black; -fx-background-radius: 5; -fx-padding: 10; -fx-font-weight: bold; -fx-cursor: hand;");
+
         btnSimpan.setOnAction(e -> {
             String id_karyawan = id.getText();
             String nama_karyawan = nama.getText();
             String tipe = cbTipe.getValue();
 
-            // Validasi Dasar
+
             if (id_karyawan.isEmpty() || !id_karyawan.matches("\\d{5}")) {
                 new Alert(Alert.AlertType.ERROR, "ID harus diisi 5 angka!").show();
                 return;
@@ -74,7 +105,7 @@ public class TambahKaryawanSc {
             if ("Karyawan Kontrak".equals(tipe)) {
                 tarif = 30000;
             } else {
-                // Validasi Karyawan Tetap
+  
                 if (cbDivisi.getValue() == null || cbJabatan.getValue() == null) {
                     new Alert(Alert.AlertType.ERROR, "Divisi dan Jabatan harus dipilih untuk Karyawan Tetap!").show();
                     return;
@@ -87,15 +118,24 @@ public class TambahKaryawanSc {
             onSimpan.run();
         });
 
-        grid.add(new Label("ID:"), 0, 0); grid.add(id, 1, 0);
-        grid.add(new Label("Nama:"), 0, 1); grid.add(nama, 1, 1);
-        grid.add(new Label("Tipe:"), 0, 2); grid.add(cbTipe, 1, 2);
-        grid.add(new Label("Divisi:"), 0, 3); grid.add(cbDivisi, 1, 3);
-        grid.add(new Label("Jabatan:"), 0, 4); grid.add(cbJabatan, 1, 4);
-        grid.add(lblInfoGaji, 0, 5, 2, 1);
-        grid.add(btnSimpan, 1, 6);
 
-        stage.setScene(new Scene(grid));
+        Label lblId = new Label("ID Karyawan:"); lblId.setStyle("-fx-text-fill: white;");
+        Label lblNama = new Label("Nama:"); lblNama.setStyle("-fx-text-fill: white;");
+        Label lblTipe = new Label("Tipe:"); lblTipe.setStyle("-fx-text-fill: white;");
+        Label lblDiv = new Label("Divisi:"); lblDiv.setStyle("-fx-text-fill: white;");
+        Label lblJab = new Label("Jabatan:"); lblJab.setStyle("-fx-text-fill: white;");
+
+        grid.add(lblId, 0, 0); grid.add(id, 1, 0);
+        grid.add(lblNama, 0, 1); grid.add(nama, 1, 1);
+        grid.add(lblTipe, 0, 2); grid.add(cbTipe, 1, 2);
+        grid.add(lblDiv, 0, 3); grid.add(cbDivisi, 1, 3);
+        grid.add(lblJab, 0, 4); grid.add(cbJabatan, 1, 4);
+        
+
+        root.getChildren().addAll(title, grid, lblInfoGaji, btnSimpan);
+
+
+        stage.setScene(new Scene(root, 420, 500)); 
         stage.show();
     }
 
@@ -103,7 +143,9 @@ public class TambahKaryawanSc {
         if ("Karyawan Kontrak".equals(tipe.getValue())) {
             lbl.setText("Tarif: 30.000 / jam");
         } else if ("Karyawan Tetap".equals(tipe.getValue()) && div.getValue() != null && jab.getValue() != null) {
-            lbl.setText("Gaji Pokok: " + hitungGajiPokok(div.getValue(), jab.getValue()));
+            lbl.setText("Gaji Pokok: Rp " + String.format("%,.0f", hitungGajiPokok(div.getValue(), jab.getValue())));
+        } else {
+            lbl.setText("Gaji/Tarif: -");
         }
     }
 
