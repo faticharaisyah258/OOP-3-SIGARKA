@@ -54,19 +54,15 @@ public class KelolaKaryawanSc {
         VBox kontrakCard = createCardSection("Daftar Karyawan Kontrak", gloockFont);
         VBox.setVgrow(tabelKontrak, Priority.ALWAYS);
         kontrakCard.getChildren().add(tabelKontrak);
-
        
         HBox tableContainer = new HBox(30); 
-        
   
         HBox.setHgrow(tetapCard, Priority.ALWAYS);
         HBox.setHgrow(kontrakCard, Priority.ALWAYS);
-        
     
         VBox.setVgrow(tableContainer, Priority.ALWAYS);
         
         tableContainer.getChildren().addAll(tetapCard, kontrakCard);
-
 
         // === TOMBOL ===
         Button btnHapus = new Button("Hapus Karyawan");
@@ -85,17 +81,8 @@ public class KelolaKaryawanSc {
                     muatData();
                 }
             } else {
-                Alert alert = new Alert(Alert.AlertType.WARNING, "Silakan pilih karyawan yang ingin dihapus pada tabel.");
-                alert.setHeaderText(null);
-                alert.setGraphic(null);
-                
-                Button btnOkNode = (Button) alert.getDialogPane().lookupButton(javafx.scene.control.ButtonType.OK);
-                if (btnOkNode != null) {
-                    btnOkNode.setStyle("-fx-background-color: " + AppStyle.LIGHTGREEN_COLOR + 
-                                       "; -fx-text-fill: " + AppStyle.NOTSOBLACK_COLOR + 
-                                       "; -fx-cursor: hand;"); 
-                }
-                alert.show();
+                // === KITA GANTI JADI PAKAI METHOD HELPER ===
+                tampilkanAlert(Alert.AlertType.WARNING, "Silakan pilih karyawan yang ingin dihapus pada tabel.");
             }
         });
 
@@ -130,7 +117,6 @@ public class KelolaKaryawanSc {
         tabelTetap.getColumns().clear();
         tabelKontrak.getColumns().clear();
 
-
         tabelTetap.setStyle("-fx-border-color: transparent; -fx-background-color: transparent;");
         tabelKontrak.setStyle("-fx-border-color: transparent; -fx-background-color: transparent;");
 
@@ -141,7 +127,6 @@ public class KelolaKaryawanSc {
         } catch (Exception e) {
             System.out.println("Gagal memuat CSS Tabel. Pastikan path /Assets/css/table-style.css sudah benar.");
         }
-
 
         tabelTetap.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tabelKontrak.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -200,5 +185,20 @@ public class KelolaKaryawanSc {
         
         tabelTetap.refresh();
         tabelKontrak.refresh();
+    }
+
+    // === METHOD HELPER UNTUK MENGUBAH GAYA ALERT ===
+    private static void tampilkanAlert(Alert.AlertType tipe, String pesan) {
+        Alert alert = new Alert(tipe, pesan);
+        alert.setHeaderText(null);
+        alert.setGraphic(null);
+        
+        Button btnOkNode = (Button) alert.getDialogPane().lookupButton(javafx.scene.control.ButtonType.OK);
+        if (btnOkNode != null) {
+            btnOkNode.setStyle("-fx-background-color: " + AppStyle.LIGHTGREEN_COLOR + 
+                               "; -fx-text-fill: " + AppStyle.NOTSOBLACK_COLOR + 
+                               "; -fx-cursor: hand;"); 
+        }
+        alert.show();
     }
 }

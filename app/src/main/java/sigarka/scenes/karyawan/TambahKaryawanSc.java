@@ -88,17 +88,17 @@ public class TambahKaryawanSc {
             String nama_karyawan = nama.getText();
             String tipe = cbTipe.getValue();
 
-
+            // === PENGGUNAAN ALERT YANG SUDAH DISESUAIKAN ===
             if (id_karyawan.isEmpty() || !id_karyawan.matches("\\d{5}")) {
-                new Alert(Alert.AlertType.ERROR, "ID harus diisi 5 angka!").show();
+                tampilkanAlert(Alert.AlertType.ERROR, "ID harus diisi 5 angka!");
                 return;
             }
             if (nama_karyawan.isEmpty()) {
-                new Alert(Alert.AlertType.ERROR, "Nama karyawan harus diisi!").show();
+                tampilkanAlert(Alert.AlertType.ERROR, "Nama karyawan harus diisi!");
                 return;
             }
             if (tipe == null) {
-                new Alert(Alert.AlertType.ERROR, "Tipe karyawan harus dipilih!").show();
+                tampilkanAlert(Alert.AlertType.ERROR, "Tipe karyawan harus dipilih!");
                 return;
             }
 
@@ -109,9 +109,8 @@ public class TambahKaryawanSc {
             if ("Karyawan Kontrak".equals(tipe)) {
                 tarif = 30000;
             } else {
-  
                 if (cbDivisi.getValue() == null || cbJabatan.getValue() == null) {
-                    new Alert(Alert.AlertType.ERROR, "Divisi dan Jabatan harus dipilih untuk Karyawan Tetap!").show();
+                    tampilkanAlert(Alert.AlertType.ERROR, "Divisi dan Jabatan harus dipilih untuk Karyawan Tetap!");
                     return;
                 }
                 gajiPokok = hitungGajiPokok(cbDivisi.getValue(), cbJabatan.getValue());
@@ -160,7 +159,7 @@ public class TambahKaryawanSc {
         return 0;
     }
 
-    // Method untuk membuat card dengan judul dan font kustom
+    //kustomisasi ComboBox
     private static void kustomisasiComboBox(ComboBox<String> comboBox) {
         comboBox.setCellFactory(lv -> new javafx.scene.control.ListCell<String>() {
             @Override
@@ -183,5 +182,20 @@ public class TambahKaryawanSc {
                 }
             }
         });
+    }
+
+    // === MENGUBAH GAYA ALERT ===
+    private static void tampilkanAlert(Alert.AlertType tipe, String pesan) {
+        Alert alert = new Alert(tipe, pesan);
+        alert.setHeaderText(null);
+        alert.setGraphic(null);
+        
+        Button btnOkNode = (Button) alert.getDialogPane().lookupButton(javafx.scene.control.ButtonType.OK);
+        if (btnOkNode != null) {
+            btnOkNode.setStyle("-fx-background-color: " + AppStyle.LIGHTGREEN_COLOR + 
+                               "; -fx-text-fill: " + AppStyle.NOTSOBLACK_COLOR + 
+                               "; -fx-cursor: hand;"); 
+        }
+        alert.show();
     }
 }
