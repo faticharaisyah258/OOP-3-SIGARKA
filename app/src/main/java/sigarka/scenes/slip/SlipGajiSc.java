@@ -49,13 +49,21 @@ public class SlipGajiSc {
         
         cbKaryawan.setPromptText("Pilih Karyawan");
         cbKaryawan.setMaxWidth(Double.MAX_VALUE);
+
+        kustomisasiComboBox(cbKaryawan);
         
         listPeriode.setPlaceholder(new Label("Belum ada slip gaji"));
+
+        kustomisasiListView(listPeriode);
         
         containerPreview.setAlignment(Pos.TOP_CENTER);
         containerPreview.setStyle("-fx-background-color: #f4f4f4;");
 
-        btnPrint.setStyle(AppStyle.LIGHT_GREEN_BUTTON);
+        btnPrint.setStyle("-fx-background-color: " + AppStyle.LIGHTGREEN_COLOR + 
+                          "; -fx-text-fill: " + AppStyle.NOTSOBLACK_COLOR + 
+                          "; -fx-background-radius: 2; -fx-padding: 10; -fx-font-weight: bold; -fx-cursor: hand;");
+
+        btnPrint.setMaxWidth(Double.MAX_VALUE);
         btnPrint.setDisable(true);
     }
 
@@ -66,50 +74,63 @@ public class SlipGajiSc {
 
         // === TITLE ===
         Label title = new Label("SLIP GAJI KARYAWAN");
-        Font gloock = Font.loadFont(getClass().getResourceAsStream("/Assets/Fonts/Gloock-Regular.ttf"), 28);
-        if (gloock != null) title.setFont(gloock);
-        else title.setStyle("-fx-font-size: 28px; -fx-font-weight: bold;");
-        title.setStyle("-fx-text-fill: " + AppStyle.BLUE_COLOR + ";");
-
-        HBox titleContainer = new HBox(title);
-        titleContainer.setAlignment(Pos.CENTER);
+        Font gloock = Font.loadFont(getClass().getResourceAsStream("/Assets/Fonts/Gloock-Regular.ttf"), 20);
+        if (gloock != null) {
+            title.setFont(gloock);
+            title.setStyle("-fx-text-fill: " + AppStyle.BLUE_COLOR + ";"); 
+        } else {
+            title.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: " + AppStyle.BLUE_COLOR + ";");
+        }
+        VBox.setMargin(title, new Insets(0, 0, 15, 0)); 
 
         // === MAIN CONTENT ===
         HBox content = new HBox(30);
         content.setAlignment(Pos.TOP_CENTER);
         VBox.setVgrow(content, Priority.ALWAYS);
 
-        // --- LEFT SIDE ---
         VBox leftSide = new VBox(15);
         leftSide.setMinWidth(320);
-        leftSide.setPadding(new Insets(20));
+        leftSide.setPadding(new Insets(30)); 
         leftSide.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
 
         muatDaftarKaryawan();
 
         Button btnHapus = new Button("Hapus Slip Terpilih");
-        btnHapus.setStyle(AppStyle.BLUE_BUTTON);
+        btnHapus.setStyle("-fx-background-color: " + AppStyle.BLUE_COLOR + 
+                          "; -fx-text-fill: white; -fx-background-radius: 2; " + 
+                          "-fx-padding: 10; -fx-font-weight: bold; -fx-cursor: hand;");     
         btnHapus.setMaxWidth(Double.MAX_VALUE);
 
+        Label lblPilih = new Label("Pilih Karyawan:");
+        lblPilih.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
+        
+        Label lblDaftar = new Label("Daftar Periode:");
+        lblDaftar.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
+
         leftSide.getChildren().addAll(
-            new Label("Pilih Karyawan:"), cbKaryawan, 
-            new Label("Daftar Periode:"), listPeriode, 
+            title, 
+            lblPilih, cbKaryawan, 
+            lblDaftar, listPeriode, 
             btnHapus
         );
         VBox.setVgrow(listPeriode, Priority.ALWAYS);
 
-        // --- RIGHT SIDE ---
         VBox rightSide = new VBox(15);
-        rightSide.setPadding(new Insets(20));
-        rightSide.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
+        rightSide.setPadding(new Insets(30));
+
+        rightSide.setStyle("-fx-background-color: " + AppStyle.TOSKA_COLOR + "; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
         HBox.setHgrow(rightSide, Priority.ALWAYS);
 
         ScrollPane scrollPreview = new ScrollPane(containerPreview);
         scrollPreview.setFitToWidth(true);
-        scrollPreview.setStyle("-fx-background-color: transparent; -fx-border-color: #ddd;");
+
+        scrollPreview.setStyle("-fx-background: #e9ecef; -fx-border-color: transparent;");
         VBox.setVgrow(scrollPreview, Priority.ALWAYS);
 
-        rightSide.getChildren().addAll(new Label("Pratinjau:"), scrollPreview, btnPrint);
+        Label lblPratinjau = new Label("Pratinjau Slip Gaji:");
+        lblPratinjau.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
+
+        rightSide.getChildren().addAll(lblPratinjau, scrollPreview, btnPrint);
 
         content.getChildren().addAll(leftSide, rightSide);
 
@@ -135,7 +156,7 @@ public class SlipGajiSc {
             }
         });
 
-        root.getChildren().addAll(titleContainer, content);
+        root.getChildren().add(content); 
         return root;
     }
 
@@ -185,7 +206,7 @@ public class SlipGajiSc {
     private void prosesHapus() {
         String terpilih = listPeriode.getSelectionModel().getSelectedItem();
         if (terpilih == null) {
-            new Alert(Alert.AlertType.WARNING, "Silakan pilih periode slip yang ingin dihapus.").show();
+            tampilkanAlert(Alert.AlertType.WARNING, "Silakan pilih periode slip yang ingin dihapus.");
             return;
         }
 
@@ -194,12 +215,27 @@ public class SlipGajiSc {
         alert.setHeaderText(null);
         alert.setContentText("Yakin ingin menghapus slip gaji periode " + terpilih + "?");
 
-        // Styling Alert (Standar Aplikasi)
-        Button btnYes = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-        if (btnYes != null) btnYes.setStyle("-fx-background-color: " + AppStyle.BLUE_COLOR + "; -fx-text-fill: white;");
+        alert.setGraphic(null);
+
+        ButtonType btnYes = new ButtonType("Yes");
+        ButtonType btnNo = new ButtonType("No");
+        alert.getButtonTypes().setAll(btnYes, btnNo);
+
+        // === STYLING BUTTON ===
+        Button btnYesNode = (Button) alert.getDialogPane().lookupButton(btnYes);
+        Button btnNoNode = (Button) alert.getDialogPane().lookupButton(btnNo);
+
+        if (btnYesNode != null) {
+            btnYesNode.setStyle("-fx-background-color: " + AppStyle.BLUE_COLOR + "; -fx-text-fill: white; -fx-cursor: hand;");
+        }
+        
+        if (btnNoNode != null) {
+            btnNoNode.setStyle("-fx-background-color: " + AppStyle.LIGHTGREEN_COLOR + "; -fx-text-fill: " + AppStyle.NOTSOBLACK_COLOR + "; -fx-cursor: hand;");
+        }
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
+        
+        if (result.isPresent() && result.get() == btnYes) {
             int idHapus = -1;
             for (Map.Entry<Integer, String> entry : dataMapPeriode.entrySet()) {
                 if (entry.getValue().equals(terpilih)) {
@@ -213,4 +249,86 @@ public class SlipGajiSc {
             }
         }
     }
+
+    private static void kustomisasiComboBox(ComboBox<String> comboBox) {
+        comboBox.setCellFactory(lv -> new javafx.scene.control.ListCell<String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("-fx-background-color: white;");
+                } else {
+                    setText(item);
+                    setStyle("-fx-background-color: white; -fx-text-fill: black;");
+
+                    setOnMouseEntered(e -> {
+                        setStyle("-fx-background-color: " + AppStyle.LIGHTGREEN_COLOR + "; -fx-text-fill: black; -fx-cursor: hand;");
+                    });
+
+                    setOnMouseExited(e -> {
+                        setStyle("-fx-background-color: white; -fx-text-fill: black;");
+                    });
+                }
+            }
+        });
+    }
+
+    private void tampilkanAlert(Alert.AlertType tipe, String pesan) {
+        Alert alert = new Alert(tipe, pesan);
+        alert.setHeaderText(null);
+        alert.setGraphic(null);
+        
+        Button btnOkNode = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+        if (btnOkNode != null) {
+            btnOkNode.setStyle("-fx-background-color: " + AppStyle.LIGHTGREEN_COLOR + 
+                               "; -fx-text-fill: " + AppStyle.NOTSOBLACK_COLOR + 
+                               "; -fx-cursor: hand;"); 
+        }
+        alert.show();
+    }
+
+    // === KUSTOMISASI LISTVIEW ===
+    private void kustomisasiListView(ListView<String> listView) {
+        listView.setCellFactory(lv -> {
+            javafx.scene.control.ListCell<String> cell = new javafx.scene.control.ListCell<String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                        setStyle("-fx-background-color: white;");
+                    } else {
+                        setText(item);
+                        if (isSelected()) {
+                            setStyle("-fx-background-color: " + AppStyle.LIGHTGREEN_COLOR + "; -fx-text-fill: black; -fx-font-weight: bold;");
+                        } else {
+                            setStyle("-fx-background-color: white; -fx-text-fill: black; -fx-font-weight: normal;");
+                        }
+                    }
+                }
+            };
+
+            cell.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+                if (cell.isEmpty()) return;
+                if (isNowSelected) {
+                    cell.setStyle("-fx-background-color: " + AppStyle.LIGHTGREEN_COLOR + "; -fx-text-fill: black; -fx-font-weight: bold;");
+                } else {
+                    cell.setStyle("-fx-background-color: white; -fx-text-fill: black; -fx-font-weight: normal;");
+                }
+            });
+
+            cell.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
+                if (cell.isEmpty() || cell.isSelected()) return; 
+                if (isNowHovered) {
+                    cell.setStyle("-fx-background-color: #e8f5e9; -fx-text-fill: black; -fx-cursor: hand;"); 
+                } else {
+                    cell.setStyle("-fx-background-color: white; -fx-text-fill: black; -fx-font-weight: normal;");
+                }
+            });
+
+            return cell;
+        });
+    }
+
 }
