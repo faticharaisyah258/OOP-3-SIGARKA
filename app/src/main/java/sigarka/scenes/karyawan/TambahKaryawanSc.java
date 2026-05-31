@@ -55,6 +55,10 @@ public class TambahKaryawanSc {
         ComboBox<String> cbJabatan = new ComboBox<>(FXCollections.observableArrayList("Manager", "Staf"));
         cbJabatan.setPromptText("Pilih Jabatan");
         cbJabatan.setPrefWidth(220);
+
+        kustomisasiComboBox(cbTipe);
+        kustomisasiComboBox(cbDivisi);
+        kustomisasiComboBox(cbJabatan);
         
         Label lblInfoGaji = new Label("Gaji/Tarif: -");
   
@@ -154,5 +158,30 @@ public class TambahKaryawanSc {
         if ("Produksi Kreatif".equals(div)) return "Manager".equals(jab) ? 6500000 : 5500000;
         if ("Artist & Repertoire".equals(div)) return "Manager".equals(jab) ? 7500000 : 6500000;
         return 0;
+    }
+
+    // Method untuk membuat card dengan judul dan font kustom
+    private static void kustomisasiComboBox(ComboBox<String> comboBox) {
+        comboBox.setCellFactory(lv -> new javafx.scene.control.ListCell<String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("-fx-background-color: white;");
+                } else {
+                    setText(item);
+                    setStyle("-fx-background-color: white; -fx-text-fill: black;");
+
+                    setOnMouseEntered(e -> {
+                        setStyle("-fx-background-color: " + AppStyle.LIGHTGREEN_COLOR + "; -fx-text-fill: black; -fx-cursor: hand;");
+                    });
+
+                    setOnMouseExited(e -> {
+                        setStyle("-fx-background-color: white; -fx-text-fill: black;");
+                    });
+                }
+            }
+        });
     }
 }
