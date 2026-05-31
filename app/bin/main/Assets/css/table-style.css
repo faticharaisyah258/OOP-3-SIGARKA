@@ -1,0 +1,68 @@
+/* Menghilangkan border dan background abu-abu bawaan */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* Mengatur area kosong menjadi putih */
+.table-view .empty-table-area {
+    -fx-background-color: white;
+}
+
+/* === HEADER TABEL === */
+.table-view .column-header-background {
+    -fx-background-color: #A5f286; 
+    -fx-background-radius: 2px 2px 0 0; 
+    -fx-padding: 0;
+}
+
+/* Mengatur tinggi dan garis bawah header */
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: transparent;
+    -fx-size: 45px; 
+    -fx-border-width: 0 0 2px 0;
+    -fx-border-color: #57B782; 
+}
+
+/* Teks  Header */
+.table-view .column-header .label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #212121; 
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 15px;
+}
+/* === BARIS DATA === */
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-cell-size: 48px; 
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-color: #F3F4F6; 
+}
+
+/* Menghilangkan garis antar kolom */
+.table-cell {
+    -fx-border-width: 0; 
+    -fx-padding: 0 0 0 15px; 
+    -fx-alignment: CENTER_LEFT;
+    -fx-text-fill: #374151; 
+    -fx-font-size: 13px;
+}
+
+/* === INTERAKSI ===*/
+/* Efek saat dilewati */
+.table-row-cell:hover {
+    -fx-background-color: #F9FAFB;
+}
+
+/* Efek saat diklik */
+.table-row-cell:selected {
+    -fx-background-color: #EFF6FF; 
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-color: #BFDBFE;
+}
+
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: #214889;
+    -fx-font-weight: bold;
+}
