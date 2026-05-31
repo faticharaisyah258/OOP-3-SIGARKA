@@ -14,11 +14,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane; 
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import sigarka.View.AppStyle;
 import sigarka.models.Karyawan;
 import sigarka.models.KaryawanTetap;
 import sigarka.repository.GajiRepo;
-import sigarka.repository.KaryawanRepo;
-import sigarka.View.AppStyle; 
+import sigarka.repository.KaryawanRepo; 
 
 public class HitungGajiSc {
 
