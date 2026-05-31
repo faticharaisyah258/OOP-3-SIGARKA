@@ -32,9 +32,7 @@ public class HitungGajiSc {
 
         // === CARD ===
         VBox card = new VBox(15); 
-
         card.setPadding(new Insets(35, 40, 35, 40)); 
-        
         card.setMaxWidth(500); 
         card.setAlignment(Pos.CENTER);
         card.setStyle("-fx-background-color: " + AppStyle.TOSKA_COLOR + "; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
@@ -118,12 +116,13 @@ public class HitungGajiSc {
 
         btnHitung.setOnAction(e -> {
             int idx = cbKaryawan.getSelectionModel().getSelectedIndex();
+            
             if (idx < 0) {
-                new Alert(Alert.AlertType.WARNING, "Silakan pilih karyawan terlebih dahulu.").show();
+                tampilkanAlert(Alert.AlertType.WARNING, "Silakan pilih karyawan terlebih dahulu.");
                 return;
             }
             if (periode.getText().isEmpty()) {
-                new Alert(Alert.AlertType.WARNING, "Silakan isi periode (contoh: Mei 2026).").show();
+                tampilkanAlert(Alert.AlertType.WARNING, "Silakan isi periode (contoh: Mei 2026).");
                 return;
             }
 
@@ -144,13 +143,11 @@ public class HitungGajiSc {
                     alfa = Integer.parseInt(((TextField)formContainer.getChildren().get(3)).getText());
                     lembur = Integer.parseInt(((TextField)formContainer.getChildren().get(5)).getText());
 
-                    // Ambil gaji pokok dari database sesuai divisi dan jabatan yang disimpan
                     double gajiPokok = karyawanRepo.getGajiPokok(karyawan.getId());
                     tunjangan_kesehatan = 300000;
                     
-                    // Bonus Badge sesuai kategori
-                    if (lembur >= 5) bonus_badge += 150000; kategori_bonus.append("\nSuper Productive 🔥");// Super Productive
-                    if (alfa == 0 && izin == 0) bonus_badge += 100000; kategori_bonus.append("\nDiscipline Master 👑"); // Discipline Master
+                    if (lembur >= 5) { bonus_badge += 150000; kategori_bonus.append("\nSuper Productive 🔥"); }
+                    if (alfa == 0 && izin == 0) { bonus_badge += 100000; kategori_bonus.append("\nDiscipline Master 👑"); }
                     
                     bonus_lembur = lembur * 100000;
                     potIzin = izin * 150000;
@@ -160,42 +157,54 @@ public class HitungGajiSc {
                     potongan = potAlfa + potIzin;
                     gajiBersih = penghasilan - potongan;
 
-                    // Reset input setelah berhasil
                     ((TextField)formContainer.getChildren().get(1)).setText("0");
                     ((TextField)formContainer.getChildren().get(3)).setText("0");
                     ((TextField)formContainer.getChildren().get(5)).setText("0");
 
                 } else {
                     jamKerja = Integer.parseInt(((TextField)formContainer.getChildren().get(1)).getText());
-                    gajiBersih = penghasilan = jamKerja * 30000; // Sesuai tarif 30.000 per jam
+                    gajiBersih = penghasilan = jamKerja * 30000; 
                     
-                    // Reset input setelah berhasil
                     ((TextField)formContainer.getChildren().get(1)).setText("0");
                 }
 
-                // VALIDASI PERIODE DOUBLE
                 if (gRepo.apakahPeriodeSudahAda(karyawan.getId(), periode.getText())) {
-                    new Alert(Alert.AlertType.ERROR, "Slip gaji untuk periode ini sudah ada!").show();
+                    tampilkanAlert(Alert.AlertType.ERROR, "Slip gaji untuk periode ini sudah ada!");
                     return;
                 }
 
                 gRepo.simpanRiwayat(karyawan.getId(), periode.getText(), tunjangan_kesehatan, bonus_badge, izin, alfa, lembur, jamKerja, gajiBersih);
                 
                 String hasilFormatted = String.format("%,.0f", gajiBersih).replace(',', '.');
-                new Alert(Alert.AlertType.INFORMATION, "Gaji berhasil dihitung dan disimpan.\nTotal Gaji Bersih: Rp " + hasilFormatted).show();
+                tampilkanAlert(Alert.AlertType.INFORMATION, "Gaji berhasil dihitung dan disimpan.\nTotal Gaji Bersih: Rp " + hasilFormatted);
                 
             } catch (NumberFormatException ex) {
-                new Alert(Alert.AlertType.ERROR, "Input harus berupa angka yang valid.").show();
+                tampilkanAlert(Alert.AlertType.ERROR, "Input harus berupa angka yang valid.");
             }
         });
 
         card.getChildren().addAll(title, grid, formContainer, btnHitung);
-        
         root.getChildren().add(card);
 
         return root;
     }
 
+    // === MENGUBAH GAYA ALERT ===
+    private static void tampilkanAlert(Alert.AlertType tipe, String pesan) {
+        Alert alert = new Alert(tipe, pesan);
+        alert.setHeaderText(null);
+        alert.setGraphic(null);
+        
+        Button btnOkNode = (Button) alert.getDialogPane().lookupButton(javafx.scene.control.ButtonType.OK);
+        if (btnOkNode != null) {
+            btnOkNode.setStyle("-fx-background-color: " + AppStyle.LIGHTGREEN_COLOR + 
+                               "; -fx-text-fill: " + AppStyle.NOTSOBLACK_COLOR + 
+                               "; -fx-cursor: hand;"); 
+        }
+        alert.show();
+    }
+
+    // === METHOD KUSTOMISASI COMBOBOX===
     private static void kustomisasiComboBox(ComboBox<String> comboBox) {
         comboBox.setCellFactory(lv -> new javafx.scene.control.ListCell<String>() {
             @Override
@@ -219,6 +228,4 @@ public class HitungGajiSc {
             }
         });
     }
-
 }
-
