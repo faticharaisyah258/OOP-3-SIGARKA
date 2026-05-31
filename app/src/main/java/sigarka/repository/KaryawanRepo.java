@@ -69,8 +69,8 @@ public class KaryawanRepo {
                 String tipe = rs.getString("tipe");
                 if ("Karyawan Tetap".equals(tipe)) {
                     list.add(new KaryawanTetap(
-                        rs.getString("nama"),
                         rs.getString("id"),
+                        rs.getString("nama"),
                         tipe,
                         rs.getString("divisi"),
                         rs.getString("jabatan"),
@@ -79,8 +79,8 @@ public class KaryawanRepo {
                     ));
                 } else {
                     list.add(new KaryawanKontrak(
-                        rs.getString("nama"),
                         rs.getString("id"),
+                        rs.getString("nama"),
                         tipe,
                         0,
                         rs.getDouble("tarif_per_jam")

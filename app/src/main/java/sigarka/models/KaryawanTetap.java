@@ -8,8 +8,8 @@ public class KaryawanTetap extends Karyawan {
     private String jabatan;
     private double gajiPokok;
 
-    public KaryawanTetap(String nama, String id, String tipe, String divisi, String jabatan, int alfa, int izin, int lembur, double gajiPokok) {
-        super(nama, id, tipe);
+    public KaryawanTetap(String id, String nama, String tipe, String divisi, String jabatan, int alfa, int izin, int lembur, double gajiPokok) {
+        super(id, nama, tipe);
         this.divisi = divisi;
         this.jabatan = jabatan;
         this.alfa = alfa;

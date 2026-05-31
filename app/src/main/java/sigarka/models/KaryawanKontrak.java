@@ -4,8 +4,8 @@ public class KaryawanKontrak extends Karyawan {
     private int jamKerja;
     private double tarifPerJam;
 
-    public KaryawanKontrak(String nama, String id, String tipe, int jamKerja, double tarifPerJam) {
-        super(nama, id, tipe);    
+    public KaryawanKontrak(String id, String nama, String tipe, int jamKerja, double tarifPerJam) {
+        super(id, nama, tipe);    
         this.jamKerja = jamKerja;
         this.tarifPerJam = tarifPerJam;
     }
