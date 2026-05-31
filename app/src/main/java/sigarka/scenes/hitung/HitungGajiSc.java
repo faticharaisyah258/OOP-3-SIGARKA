@@ -130,8 +130,13 @@ public class HitungGajiSc {
             Karyawan karyawan = daftarKaryawan.get(idx);
             double gajiBersih = 0;
             double tunjangan_kesehatan = 0;
-            double bonus = 0;
+            double potIzin = 0, potAlfa = 0;
+            double bonus_badge = 0;
+            double bonus_lembur = 0;
+            StringBuilder kategori_bonus = new StringBuilder();
             int izin = 0, alfa = 0, lembur = 0, jamKerja = 0;
+            double penghasilan = 0;
+            double potongan = 0;
 
             try {
                 if (karyawan instanceof KaryawanTetap) {
@@ -144,11 +149,15 @@ public class HitungGajiSc {
                     tunjangan_kesehatan = 300000;
                     
                     // Bonus Badge sesuai kategori
-                    if (lembur >= 5) bonus += 150000; // Super Productive
-                    if (alfa == 0 && izin == 0) bonus += 100000; // Discipline Master
+                    if (lembur >= 5) bonus_badge += 150000; kategori_bonus.append("\nSuper Productive 🔥");// Super Productive
+                    if (alfa == 0 && izin == 0) bonus_badge += 100000; kategori_bonus.append("\nDiscipline Master 👑"); // Discipline Master
                     
-                    double penghasilan = gajiPokok + tunjangan_kesehatan + (lembur * 100000) + bonus;
-                    double potongan = (alfa * 150000) + (izin * 75000);
+                    bonus_lembur = lembur * 100000;
+                    potIzin = izin * 150000;
+                    potAlfa = alfa * 75000;
+
+                    penghasilan = gajiPokok + tunjangan_kesehatan + bonus_lembur + bonus_badge;
+                    potongan = potAlfa + potIzin;
                     gajiBersih = penghasilan - potongan;
 
                     // Reset input setelah berhasil
@@ -158,13 +167,19 @@ public class HitungGajiSc {
 
                 } else {
                     jamKerja = Integer.parseInt(((TextField)formContainer.getChildren().get(1)).getText());
-                    gajiBersih = jamKerja * 30000; // Sesuai tarif 30.000 per jam
+                    gajiBersih = penghasilan = jamKerja * 30000; // Sesuai tarif 30.000 per jam
                     
                     // Reset input setelah berhasil
                     ((TextField)formContainer.getChildren().get(1)).setText("0");
                 }
 
-                gRepo.simpanRiwayat(karyawan.getId(), periode.getText(), tunjangan_kesehatan, bonus, izin, alfa, lembur, jamKerja, gajiBersih);
+                // VALIDASI PERIODE DOUBLE
+                if (gRepo.apakahPeriodeSudahAda(karyawan.getId(), periode.getText())) {
+                    new Alert(Alert.AlertType.ERROR, "Slip gaji untuk periode ini sudah ada!").show();
+                    return;
+                }
+
+                gRepo.simpanRiwayat(karyawan.getId(), periode.getText(), tunjangan_kesehatan, bonus_badge, izin, alfa, lembur, jamKerja, gajiBersih);
                 
                 String hasilFormatted = String.format("%,.0f", gajiBersih).replace(',', '.');
                 new Alert(Alert.AlertType.INFORMATION, "Gaji berhasil dihitung dan disimpan.\nTotal Gaji Bersih: Rp " + hasilFormatted).show();
