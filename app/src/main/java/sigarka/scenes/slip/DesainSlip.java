@@ -82,6 +82,7 @@ public class DesainSlip {
         infoBox.getChildren().addAll(
             buatBarisInfo("Nama Karyawan:", getString(data, "nama", "-")),
             buatBarisInfo("ID Karyawan:", getString(data, "id", "-")),
+            buatBarisInfo("Divisi", getString(data, "divisi", "-")),
             buatBarisInfo("Jabatan:", getString(data, "jabatan", "-") + tipeLabel)
         );
         slip.getChildren().add(infoBox);
@@ -110,8 +111,9 @@ public class DesainSlip {
             pendRows.add(new String[]{"Bonus Lembur", formatRp(bonusLembur)});
             
             String kat = getKategoriBonus(lembur, alpa, izin);
-            String badgeLable = kat.isEmpty() ? "Bonus Badge" : "Bonus Badge" + kat;
-            pendRows.add(new String[]{badgeLable, formatRp(bonusBadge)});
+            String badgeLable = kat.isEmpty() ? "Bonus Badge" : "Bonus Badge: " + kat;
+            String formatBadge = kat.isEmpty() ? formatRp(bonusBadge) : "\n" + formatRp(bonusBadge);
+            pendRows.add(new String[]{badgeLable, formatBadge});
             
             totalPendapatan = gajiPokok + tunjangan + bonusLembur + bonusBadge;
         } else {
@@ -148,7 +150,7 @@ public class DesainSlip {
         return slip;
     }
 
-    
+
     // === HELPER METHODS ===
     private static HBox buatBarisInfo(String label, String value) {
         HBox box = new HBox(5);
@@ -226,9 +228,9 @@ public class DesainSlip {
     // AMBIL DATA UNTUK SLIP GAJI
     private static String getKategoriBonus(int lembur, int alpa, int izin) {
         StringBuilder sb = new StringBuilder();
-        if (lembur >= 5) sb.append("\n\t- Super Productive 🔥");
+        if (lembur >= 5) sb.append(" - Super Productive 🔥\n ");
         if (alpa == 0 && izin == 0) {
-            sb.append("\n\t- Discipline Master 👑");
+            sb.append("\t\t\t- Discipline Master 👑");
         }
         return sb.toString();
     }
