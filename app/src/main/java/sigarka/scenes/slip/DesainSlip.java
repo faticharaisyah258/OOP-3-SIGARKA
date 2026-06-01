@@ -27,11 +27,13 @@ import sigarka.View.AppStyle;
 public class DesainSlip {
 
     public static VBox buatVisualSlip(Map<String, Object> data) {
-        VBox slip = new VBox(20); 
-        slip.setPadding(new Insets(50, 60, 50, 60));
+        VBox slip = new VBox(20);
+
+        // PADDING IDEAL UNTUK LAYAR DAN KERTAS
+        slip.setPadding(new Insets(50, 70, 50, 70));
         
         slip.setStyle("-fx-background-color: white; -fx-border-color: " + AppStyle.BLUE_COLOR + "; -fx-border-width: 2.5; -fx-border-insets: 15;");
-        slip.setMinWidth(595); 
+        slip.setMinWidth(655); 
         slip.setMinHeight(842); 
         slip.setAlignment(Pos.TOP_CENTER);
 
@@ -55,6 +57,7 @@ public class DesainSlip {
         // === HEADER ===
         VBox headerBox = new VBox(8);
         headerBox.setAlignment(Pos.CENTER);
+        headerBox.setMaxWidth(Double.MAX_VALUE);
 
         Label lblJudul = new Label("SLIP GAJI KARYAWAN");
         Font gloock = Font.loadFont(DesainSlip.class.getResourceAsStream("/Assets/Fonts/Gloock-Regular.ttf"), 26);
@@ -75,15 +78,16 @@ public class DesainSlip {
         // === INFO KARYAWAN ===
         VBox infoBox = new VBox(5);
         infoBox.setAlignment(Pos.CENTER_LEFT);
+        infoBox.setMaxWidth(Double.MAX_VALUE);
 
         String tipe = getString(data, "tipe", "Tetap");
         String tipeLabel = "Karyawan Tetap".equals(tipe) ? " (Tetap)" : " (Kontrak)";
         
         infoBox.getChildren().addAll(
-            buatBarisInfo("Nama Karyawan:", getString(data, "nama", "-")),
-            buatBarisInfo("ID Karyawan:", getString(data, "id", "-")),
-            buatBarisInfo("Divisi", getString(data, "divisi", "-")),
-            buatBarisInfo("Jabatan:", getString(data, "jabatan", "-") + tipeLabel)
+            buatBarisInfo("Nama Karyawan\t:", getString(data, "nama", "-")),
+            buatBarisInfo("ID Karyawan\t\t:", getString(data, "id", "-")),
+            buatBarisInfo("Divisi\t\t\t:", getString(data, "divisi", "-")),
+            buatBarisInfo("Jabatan\t\t\t:", getString(data, "jabatan", "-") + tipeLabel)
         );
         slip.getChildren().add(infoBox);
 
@@ -153,28 +157,35 @@ public class DesainSlip {
 
     // === HELPER METHODS ===
     private static HBox buatBarisInfo(String label, String value) {
-        HBox box = new HBox(5);
+        HBox box = new HBox(10);
+        box.setMaxWidth(Double.MAX_VALUE);
+        
         Label l = new Label(label);
         l.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: black;");
+        l.setMinWidth(120); 
+        
         Label v = new Label(value);
         v.setStyle("-fx-font-size: 14px; -fx-text-fill: black;");
+        
         box.getChildren().addAll(l, v);
         return box;
     }
 
     private static VBox buatTabel(String judulTable, String headerKiri, String headerKanan, List<String[]> dataRows, String[] totalRow) {
         VBox container = new VBox(5);
+        container.setMaxWidth(Double.MAX_VALUE);
         
         Label judul = new Label(judulTable);
         judul.setStyle("-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: black;");
         
         GridPane grid = new GridPane();
+        grid.setMaxWidth(Double.MAX_VALUE);
         grid.setStyle("-fx-border-color: #37474f; -fx-border-width: 1.5; -fx-background-color: white;");
         
         ColumnConstraints col1 = new ColumnConstraints();
-        col1.setPercentWidth(60);
+        col1.setPercentWidth(65);
         ColumnConstraints col2 = new ColumnConstraints();
-        col2.setPercentWidth(40);
+        col2.setPercentWidth(35);
         grid.getColumnConstraints().addAll(col1, col2);
         
         Label h1 = new Label(headerKiri);
@@ -258,7 +269,6 @@ public class DesainSlip {
         return 0;
     }
 
-    // === METHOD PRINT
     public static void cetakKePrinter(VBox node, Stage stage) {
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job != null) {
@@ -267,20 +277,25 @@ public class DesainSlip {
                 Printer printer = job.getPrinter();
                 PageLayout pageLayout = printer.createPageLayout(Paper.A4, PageOrientation.PORTRAIT, Printer.MarginType.HARDWARE_MINIMUM);
 
-                double pW = pageLayout.getPrintableWidth();
-                double pH = pageLayout.getPrintableHeight();
-                double nW = node.getBoundsInParent().getWidth();
-                double nH = node.getBoundsInParent().getHeight();
+                double pWidth = pageLayout.getPrintableWidth();
+                double pHeight = pageLayout.getPrintableHeight();
+                double nWidth = node.getBoundsInParent().getWidth();
+                double nHeight = node.getBoundsInParent().getHeight();
 
-                double scale = Math.min(pW / nW, pH / nH);
-                scale *= 0.96; 
+                double scaleX = pWidth / nWidth;
+                double scaleY = pHeight / nHeight;
+                double scale = Math.min(scaleX, scaleY);
+                
+                scale *= 0.95; 
 
                 Scale s = new Scale(scale, scale);
                 node.getTransforms().add(s);
 
-                if (job.printPage(pageLayout, node)) {
+                boolean printed = job.printPage(pageLayout, node);
+                if (printed) {
                     job.endJob();
                 }
+                
                 node.getTransforms().remove(s);
             }
         }

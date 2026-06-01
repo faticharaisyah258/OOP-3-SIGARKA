@@ -155,7 +155,7 @@ public class HitungGajiSc {
                     if (alfa == 0 && izin == 0) bonus_badge += 100000;     // Discipline Master 👑
 
                     double penghasilan = gajiPokok + tunjangan_kesehatan + (lembur * 100000) + bonus_badge;
-                    double potongan = (alfa * 75000) + (izin * 150000);
+                    double potongan = (izin * 75000) + (alfa * 150000);
                     gajiBersih = penghasilan - potongan;
 
                     ((TextField)formContainer.getChildren().get(1)).setText("0");

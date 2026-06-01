@@ -141,6 +141,7 @@ public class KelolaKaryawanSc {
         tabelTetap.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tabelKontrak.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
+        // === TABEL K.TETAP
         TableColumn<Karyawan, String> colId = new TableColumn<>("ID");
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         
@@ -155,9 +156,24 @@ public class KelolaKaryawanSc {
         
         TableColumn<Karyawan, Double> colGajiPokok = new TableColumn<>("Gaji Pokok");
         colGajiPokok.setCellValueFactory(new PropertyValueFactory<>("gajiPokok"));
+
+        // FORMAT RUPIAH UNTUK GAJI POKOK
+        colGajiPokok.setCellFactory(column -> new javafx.scene.control.TableCell<Karyawan, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText("Rp " + String.format("%,.0f", item).replace(',', '.'));
+                }
+            }
+        });
         
         tabelTetap.getColumns().addAll(colId, colNama, colDiv, colJab, colGajiPokok);
 
+
+        // TABEL K. KONTRAK
         TableColumn<Karyawan, String> colIdK = new TableColumn<>("ID Karyawan");
         colIdK.setCellValueFactory(new PropertyValueFactory<>("id"));
         
@@ -166,6 +182,19 @@ public class KelolaKaryawanSc {
         
         TableColumn<Karyawan, Double> colTarif = new TableColumn<>("Tarif");
         colTarif.setCellValueFactory(new PropertyValueFactory<>("tarifPerJam"));
+
+         // FORMAT RUPIAH UNTUK TARIF
+        colTarif.setCellFactory(column -> new javafx.scene.control.TableCell<Karyawan, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText("Rp " + String.format("%,.0f", item).replace(',', '.'));
+                }
+            }
+        });
 
         tabelKontrak.getColumns().addAll(colIdK, colNamaK, colTarif);
     }

@@ -187,6 +187,7 @@ public class SlipGajiSc {
             return;
         }
 
+        listPeriode.getSelectionModel().clearSelection();
         List<Karyawan> listK = kRepo.ambilSemua();
         String idK = listK.get(idx).getId();
 

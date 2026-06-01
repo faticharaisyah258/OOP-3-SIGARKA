@@ -94,9 +94,16 @@ public class TambahKaryawanSc {
                            "; -fx-text-fill: black; -fx-background-radius: 5; -fx-padding: 10; -fx-font-weight: bold; -fx-cursor: hand;");
 
         btnSimpan.setOnAction(e -> {
+            KaryawanRepo repo = new KaryawanRepo();
             String id_karyawan = id.getText();
             String nama_karyawan = nama.getText();
             String tipe = cbTipe.getValue();
+
+            // VALIDASI ID DUPLIKAT
+            if (repo.apakahIdSudahAda(id_karyawan)) {
+                tampilkanAlert(Alert.AlertType.ERROR, "ID Karyawan '" + id_karyawan + "' sudah terdaftar!");
+                return;
+            }
 
             // === PENGGUNAAN ALERT YANG SUDAH DISESUAIKAN ===
             if (id_karyawan.isEmpty() || !id_karyawan.matches("\\d{5}")) {
@@ -112,15 +119,8 @@ public class TambahKaryawanSc {
                 return;
             }
 
-            // simpan ke database kRepo
-            KaryawanRepo repo = new KaryawanRepo();
 
-            // VALIDASI ID DUPLIKAT
-            if (repo.apakahIdSudahAda(id_karyawan)) {
-                tampilkanAlert(Alert.AlertType.ERROR, "ID Karyawan '" + id_karyawan + "' sudah terdaftar!");
-                return;
-            }
-
+            // === Mengambil Info Gaji
             double gajiPokok = 0;
             double tarif = 0;
             
@@ -133,6 +133,7 @@ public class TambahKaryawanSc {
                 }
                 gajiPokok = hitungGajiPokok(cbDivisi.getValue(), cbJabatan.getValue());
             }
+            
 
             repo.tambah(id_karyawan, nama_karyawan, tipe, cbDivisi.getValue(), cbJabatan.getValue(), gajiPokok, tarif);
             stage.close();
