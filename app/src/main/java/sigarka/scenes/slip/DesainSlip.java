@@ -51,6 +51,7 @@ public class DesainSlip {
             System.out.println("Logo tidak ditemukan.");
         }
 
+
         // === HEADER ===
         VBox headerBox = new VBox(8);
         headerBox.setAlignment(Pos.CENTER);
@@ -70,6 +71,7 @@ public class DesainSlip {
         Region spacer1 = new Region(); spacer1.setMinHeight(15);
         slip.getChildren().add(spacer1);
 
+
         // === INFO KARYAWAN ===
         VBox infoBox = new VBox(5);
         infoBox.setAlignment(Pos.CENTER_LEFT);
@@ -83,6 +85,7 @@ public class DesainSlip {
             buatBarisInfo("Jabatan:", getString(data, "jabatan", "-") + tipeLabel)
         );
         slip.getChildren().add(infoBox);
+
 
         // === DATA GAJI ===
         double gajiPokok = getDouble(data, "gaji_pokok");
@@ -107,7 +110,7 @@ public class DesainSlip {
             pendRows.add(new String[]{"Bonus Lembur", formatRp(bonusLembur)});
             
             String kat = getKategoriBonus(lembur, alpa, izin);
-            String badgeLable = kat.isEmpty() ? "Bonus Badge" : "Bonus Badge (" + kat + ")";
+            String badgeLable = kat.isEmpty() ? "Bonus Badge" : "Bonus Badge" + kat;
             pendRows.add(new String[]{badgeLable, formatRp(bonusBadge)});
             
             totalPendapatan = gajiPokok + tunjangan + bonusLembur + bonusBadge;
@@ -145,8 +148,8 @@ public class DesainSlip {
         return slip;
     }
 
+    
     // === HELPER METHODS ===
-
     private static HBox buatBarisInfo(String label, String value) {
         HBox box = new HBox(5);
         Label l = new Label(label);
@@ -219,12 +222,13 @@ public class DesainSlip {
         return container;
     }
 
+
+    // AMBIL DATA UNTUK SLIP GAJI
     private static String getKategoriBonus(int lembur, int alpa, int izin) {
         StringBuilder sb = new StringBuilder();
-        if (lembur >= 5) sb.append("Super Productive");
+        if (lembur >= 5) sb.append("\n\t- Super Productive 🔥");
         if (alpa == 0 && izin == 0) {
-            if (sb.length() > 0) sb.append(", ");
-            sb.append("Discipline Master");
+            sb.append("\n\t- Discipline Master 👑");
         }
         return sb.toString();
     }
@@ -252,6 +256,7 @@ public class DesainSlip {
         return 0;
     }
 
+    // === METHOD PRINT
     public static void cetakKePrinter(VBox node, Stage stage) {
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job != null) {

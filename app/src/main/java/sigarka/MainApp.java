@@ -12,6 +12,7 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) {
         stage.setScene(LoginSc.createScene(stage));
+        stage.setMaximized(true);
         stage.show();
     }
 

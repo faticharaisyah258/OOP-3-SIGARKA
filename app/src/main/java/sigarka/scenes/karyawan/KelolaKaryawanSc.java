@@ -18,9 +18,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import sigarka.View.AppStyle;
 import sigarka.models.Karyawan;
-import sigarka.repository.KaryawanRepo;
-import sigarka.View.AppStyle; 
+import sigarka.repository.KaryawanRepo; 
 
 public class KelolaKaryawanSc {
 
@@ -30,6 +30,7 @@ public class KelolaKaryawanSc {
 
     public static VBox getView() {
 
+    // === TAMPILAN DATA KARYAWAN ===
         VBox root = new VBox(30);
         root.setPadding(new Insets(30));
         root.setStyle("-fx-background-color: " + AppStyle.NOTSOWHITE_COLOR + ";");
@@ -44,9 +45,11 @@ public class KelolaKaryawanSc {
             if (newVal != null) tabelTetap.getSelectionModel().clearSelection();
         });
 
-        // === FONT GLOOCK ===
+        
+    // === FONT GLOOCK ===
         Font gloockFont = Font.loadFont(KelolaKaryawanSc.class.getResourceAsStream("/Assets/Fonts/Gloock-Regular.ttf"), 20);
 
+        // Card Table
         VBox tetapCard = createCardSection("Daftar Karyawan Tetap", gloockFont);
         VBox.setVgrow(tabelTetap, Priority.ALWAYS); 
         tetapCard.getChildren().add(tabelTetap);
@@ -55,8 +58,8 @@ public class KelolaKaryawanSc {
         VBox.setVgrow(tabelKontrak, Priority.ALWAYS);
         kontrakCard.getChildren().add(tabelKontrak);
        
+        // Tabel Data Karyawan
         HBox tableContainer = new HBox(30); 
-  
         HBox.setHgrow(tetapCard, Priority.ALWAYS);
         HBox.setHgrow(kontrakCard, Priority.ALWAYS);
     
@@ -64,13 +67,15 @@ public class KelolaKaryawanSc {
         
         tableContainer.getChildren().addAll(tetapCard, kontrakCard);
 
-        // === TOMBOL ===
+
+    // === TOMBOL ===
         Button btnHapus = new Button("Hapus Karyawan");
         btnHapus.setStyle("-fx-background-color: " + AppStyle.BLUE_COLOR + "; -fx-text-fill: white; -fx-background-radius: 2; -fx-padding: 8 20; -fx-font-size: 13px; -fx-cursor: hand; -fx-font-weight: bold;");
 
         Button btnTambah = new Button("Tambahkan Karyawan");
         btnTambah.setStyle("-fx-background-color: " + AppStyle.LIGHTGREEN_COLOR + "; -fx-text-fill: " + AppStyle.NOTSOBLACK_COLOR + "; -fx-background-radius: 2; -fx-padding: 8 20; -fx-font-size: 13px; -fx-cursor: hand; -fx-font-weight: bold;");
 
+        // === SET ACTION ===
         btnTambah.setOnAction(e -> TambahKaryawanSc.tampilkan(KelolaKaryawanSc::muatData));
         btnHapus.setOnAction(e -> {
             Karyawan kTerpilih = tabelTetap.getSelectionModel().getSelectedItem();
@@ -89,10 +94,13 @@ public class KelolaKaryawanSc {
         HBox buttonBox = new HBox(15, btnHapus, btnTambah);
         buttonBox.setAlignment(Pos.CENTER_LEFT);
 
+
         root.getChildren().addAll(tableContainer, buttonBox);
         return root;
     }
 
+
+    // === MEMBUAH CARD UNTUK DATA KARYAWAN
     private static VBox createCardSection(String titleStr, Font customFont) {
         VBox card = new VBox(20);
         card.setPadding(new Insets(25));
@@ -113,6 +121,8 @@ public class KelolaKaryawanSc {
         return card;
     }
 
+
+    // === MEMBUAT TABEL DAN MEMUAT DATA KARYWAWAN
     private static void setupTabel() {
         tabelTetap.getColumns().clear();
         tabelKontrak.getColumns().clear();
@@ -186,6 +196,7 @@ public class KelolaKaryawanSc {
         tabelTetap.refresh();
         tabelKontrak.refresh();
     }
+
 
     // === METHOD HELPER UNTUK MENGUBAH GAYA ALERT ===
     private static void tampilkanAlert(Alert.AlertType tipe, String pesan) {

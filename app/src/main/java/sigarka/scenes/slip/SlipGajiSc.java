@@ -36,6 +36,7 @@ public class SlipGajiSc {
     private KaryawanRepo kRepo = new KaryawanRepo();
     private Stage stage;
 
+    
     public SlipGajiSc(Stage stage) {
         this.stage = stage;
         inisialisasiKomponen();
@@ -67,10 +68,14 @@ public class SlipGajiSc {
         btnPrint.setDisable(true);
     }
 
+
+    // === TMPILAN UTAMA ===
     public VBox getView() {
+
         VBox root = new VBox(20);
         root.setPadding(new Insets(30));
         root.setStyle("-fx-background-color: " + AppStyle.NOTSOWHITE_COLOR + ";");
+
 
         // === TITLE ===
         Label title = new Label("SLIP GAJI KARYAWAN");
@@ -82,6 +87,7 @@ public class SlipGajiSc {
             title.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: " + AppStyle.BLUE_COLOR + ";");
         }
         VBox.setMargin(title, new Insets(0, 0, 15, 0)); 
+
 
         // === MAIN CONTENT ===
         HBox content = new HBox(30);
@@ -95,17 +101,17 @@ public class SlipGajiSc {
 
         muatDaftarKaryawan();
 
+        Label lblPilih = new Label("Pilih Karyawan:");
+        lblPilih.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
+        
+        Label lblDaftar = new Label("Daftar Periode:");
+        lblDaftar.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");        
+
         Button btnHapus = new Button("Hapus Slip Terpilih");
         btnHapus.setStyle("-fx-background-color: " + AppStyle.BLUE_COLOR + 
                           "; -fx-text-fill: white; -fx-background-radius: 2; " + 
                           "-fx-padding: 10; -fx-font-weight: bold; -fx-cursor: hand;");     
         btnHapus.setMaxWidth(Double.MAX_VALUE);
-
-        Label lblPilih = new Label("Pilih Karyawan:");
-        lblPilih.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
-        
-        Label lblDaftar = new Label("Daftar Periode:");
-        lblDaftar.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
 
         leftSide.getChildren().addAll(
             title, 
@@ -115,6 +121,8 @@ public class SlipGajiSc {
         );
         VBox.setVgrow(listPeriode, Priority.ALWAYS);
 
+
+        // SLIP GAJI PRATINJAU
         VBox rightSide = new VBox(15);
         rightSide.setPadding(new Insets(30));
 
@@ -134,7 +142,8 @@ public class SlipGajiSc {
 
         content.getChildren().addAll(leftSide, rightSide);
 
-        // === EVENT HANDLERS ===
+
+        // === SET ACTION ===
         cbKaryawan.setOnAction(e -> muatDaftarPeriode());
 
         listPeriode.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
@@ -156,10 +165,13 @@ public class SlipGajiSc {
             }
         });
 
+
         root.getChildren().add(content); 
         return root;
     }
 
+
+    // TAMPILAN KIRI
     private void muatDaftarKaryawan() {
         List<Karyawan> list = kRepo.ambilSemua();
         List<String> items = list.stream()
@@ -182,25 +194,6 @@ public class SlipGajiSc {
         listPeriode.setItems(FXCollections.observableArrayList(dataMapPeriode.values()));
         containerPreview.getChildren().clear();
         btnPrint.setDisable(true);
-    }
-
-    private void tampilkanPreview(String periode) {
-        int idData = -1;
-        for (Map.Entry<Integer, String> entry : dataMapPeriode.entrySet()) {
-            if (entry.getValue().equals(periode)) {
-                idData = entry.getKey();
-                break;
-            }
-        }
-
-        if (idData != -1) {
-            Map<String, Object> data = gRepo.ambilDetailGaji(idData);
-            if (data != null && !data.isEmpty()) {
-                VBox visual = DesainSlip.buatVisualSlip(data);
-                containerPreview.getChildren().clear();
-                containerPreview.getChildren().add(visual);
-            }
-        }
     }
 
     private void prosesHapus() {
@@ -250,6 +243,27 @@ public class SlipGajiSc {
         }
     }
 
+    // TAMPILKAN SLIP GAJI
+    private void tampilkanPreview(String periode) {
+        int idData = -1;
+        for (Map.Entry<Integer, String> entry : dataMapPeriode.entrySet()) {
+            if (entry.getValue().equals(periode)) {
+                idData = entry.getKey();
+                break;
+            }
+        }
+
+        if (idData != -1) {
+            Map<String, Object> data = gRepo.ambilDetailGaji(idData);
+            if (data != null && !data.isEmpty()) {
+                VBox visual = DesainSlip.buatVisualSlip(data);
+                containerPreview.getChildren().clear();
+                containerPreview.getChildren().add(visual);
+            }
+        }
+    }
+
+    // -
     private static void kustomisasiComboBox(ComboBox<String> comboBox) {
         comboBox.setCellFactory(lv -> new javafx.scene.control.ListCell<String>() {
             @Override

@@ -32,7 +32,7 @@ public class MenuSc {
 
     public static Scene createScene(Stage stage) {
 
-        // === SIDEBAR ===
+    // === SIDEBAR ===
         VBox sidebar = new VBox();
         sidebar.setPrefWidth(250);
         sidebar.setStyle("-fx-background-color: transparent;"); 
@@ -74,6 +74,8 @@ public class MenuSc {
             "-fx-background-radius: 0 20 0 0;" 
         );
 
+
+    // === BUTTON MENU ===
         Button btnKaryawan = new Button("Data Karyawan");
         Button btnHitung = new Button("Hitung Gaji");
         Button btnSlip = new Button("Slip Gaji");
@@ -110,7 +112,8 @@ public class MenuSc {
         menuContainer.getChildren().addAll(btnKaryawan, btnHitung, btnSlip, spacer, btnLogout);
         sidebar.getChildren().addAll(logoSection, menuContainer);
 
-        // === CONTENT AREA ===
+
+    // === CONTENT AREA ===
         StackPane contentArea = new StackPane();
         HBox.setHgrow(contentArea, Priority.ALWAYS); 
         contentArea.setStyle("-fx-background-color: " + AppStyle.NOTSOWHITE_COLOR + ";");
@@ -119,8 +122,9 @@ public class MenuSc {
         Node defaultKaryawanView = sigarka.scenes.karyawan.KelolaKaryawanSc.getView();
         contentArea.getChildren().add(defaultKaryawanView);
 
+
         // === EVENT HANDLERS (INTERAKSI TOMBOL MENU) ===
-        
+        // Data Karyawan
         btnKaryawan.setOnAction(e -> {
             // Ubah gaya visual
             btnKaryawan.setStyle(AppStyle.MENU_DASHBOARD_ACTIVE);
@@ -138,6 +142,7 @@ public class MenuSc {
             contentArea.getChildren().add(karyawanView);
         });
 
+        // Hitung Gaji
         btnHitung.setOnAction(e -> {
             // Ubah gaya visual
             btnKaryawan.setStyle(AppStyle.MENU_DASHBOARD_INACTIVE);
@@ -155,6 +160,7 @@ public class MenuSc {
             contentArea.getChildren().add(hitungView);
         });
 
+        // Slip Gaji
         btnSlip.setOnAction(e -> {
             // Ubah gaya visual
             btnKaryawan.setStyle(AppStyle.MENU_DASHBOARD_INACTIVE);
@@ -172,6 +178,7 @@ public class MenuSc {
             contentArea.getChildren().add(slipSc.getView());
         });
 
+        
         // === ROOT LAYOUT ===
         HBox root = new HBox(0); 
         root.setStyle("-fx-background-color: " + AppStyle.NOTSOWHITE_COLOR + ";");

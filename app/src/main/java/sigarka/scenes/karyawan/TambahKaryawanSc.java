@@ -12,14 +12,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import sigarka.repository.KaryawanRepo;
-import sigarka.View.AppStyle; 
+import sigarka.View.AppStyle;
+import sigarka.repository.KaryawanRepo; 
 
 public class TambahKaryawanSc {
 
     public static void tampilkan(Runnable onSimpan) {
         Stage stage = new Stage();
         stage.setTitle("Tambah Data Karyawan");
+
 
         // === LAYOUT UTAMA ===
         VBox root = new VBox(25); 
@@ -30,28 +31,35 @@ public class TambahKaryawanSc {
         Label title = new Label("Tambah Karyawan Baru");
         title.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white;");
 
+
         // === GRID FORM ===
         GridPane grid = new GridPane();
         grid.setVgap(15);
         grid.setHgap(15);
         grid.setAlignment(Pos.CENTER);
 
+        // === INPUTAN ===
+        // ID
         TextField id = new TextField();
         id.setPromptText("ID (5 angka)");
         id.setPrefWidth(220); 
 
+        // NAMA
         TextField nama = new TextField();
         nama.setPromptText("Nama Lengkap");
         nama.setPrefWidth(220);
 
+        // TIPE
         ComboBox<String> cbTipe = new ComboBox<>(FXCollections.observableArrayList("Karyawan Tetap", "Karyawan Kontrak"));
         cbTipe.setPromptText("Pilih Tipe");
         cbTipe.setPrefWidth(220);
 
+        // DIVISI
         ComboBox<String> cbDivisi = new ComboBox<>(FXCollections.observableArrayList("Bisnis Global dan Pemasaran", "Produksi Kreatif", "Artist & Repertoire"));
         cbDivisi.setPromptText("Pilih Divisi");
         cbDivisi.setPrefWidth(220);
 
+        // DIVISI   
         ComboBox<String> cbJabatan = new ComboBox<>(FXCollections.observableArrayList("Manager", "Staf"));
         cbJabatan.setPromptText("Pilih Jabatan");
         cbJabatan.setPrefWidth(220);
@@ -61,9 +69,10 @@ public class TambahKaryawanSc {
         kustomisasiComboBox(cbJabatan);
         
         Label lblInfoGaji = new Label("Gaji/Tarif: -");
-  
         lblInfoGaji.setStyle("-fx-text-fill: white; -fx-font-style: italic;"); 
 
+
+        // === SET ACTION ===
         cbDivisi.setDisable(true);
         cbJabatan.setDisable(true);
 
@@ -77,6 +86,7 @@ public class TambahKaryawanSc {
         cbDivisi.setOnAction(e -> updateInfoGaji(cbTipe, cbDivisi, cbJabatan, lblInfoGaji));
         cbJabatan.setOnAction(e -> updateInfoGaji(cbTipe, cbDivisi, cbJabatan, lblInfoGaji));
 
+        
         Button btnSimpan = new Button("Simpan Karyawan");
         btnSimpan.setMaxWidth(Double.MAX_VALUE); 
 
@@ -102,6 +112,7 @@ public class TambahKaryawanSc {
                 return;
             }
 
+            // simpan ke database kRepo
             KaryawanRepo repo = new KaryawanRepo();
             double gajiPokok = 0;
             double tarif = 0;
@@ -142,6 +153,7 @@ public class TambahKaryawanSc {
         stage.show();
     }
 
+    // === TAMPILKAN INFO GAJI/TARIF
     private static void updateInfoGaji(ComboBox<String> tipe, ComboBox<String> div, ComboBox<String> jab, Label lbl) {
         if ("Karyawan Kontrak".equals(tipe.getValue())) {
             lbl.setText("Tarif: 30.000 / jam");
@@ -158,6 +170,7 @@ public class TambahKaryawanSc {
         if ("Artist & Repertoire".equals(div)) return "Manager".equals(jab) ? 7500000 : 6500000;
         return 0;
     }
+
 
     //kustomisasi ComboBox
     private static void kustomisasiComboBox(ComboBox<String> comboBox) {
@@ -183,6 +196,7 @@ public class TambahKaryawanSc {
             }
         });
     }
+
 
     // === MENGUBAH GAYA ALERT ===
     private static void tampilkanAlert(Alert.AlertType tipe, String pesan) {

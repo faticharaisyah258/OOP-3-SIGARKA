@@ -1,10 +1,11 @@
 package sigarka.scenes;
 
-import javafx.scene.control.Button;
-import javafx.stage.Stage;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import java.util.Optional;
+
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
 import sigarka.View.AppStyle;
 
 public class LogoutSc {
@@ -44,6 +45,10 @@ public class LogoutSc {
 
                         if (result.isPresent() && result.get() == btnYes) {
                                 stage.setScene(LoginSc.createScene(stage));
+                                javafx.application.Platform.runLater(() -> {
+                                        stage.setMaximized(false);
+                                        stage.setMaximized(true);
+                                });
                         }
                 });
 

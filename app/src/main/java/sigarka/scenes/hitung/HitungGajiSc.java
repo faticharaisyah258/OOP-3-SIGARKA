@@ -30,12 +30,14 @@ public class HitungGajiSc {
         root.setStyle("-fx-background-color: " + AppStyle.NOTSOWHITE_COLOR + ";");
         root.setPadding(new Insets(40));
 
+
         // === CARD ===
         VBox card = new VBox(15); 
         card.setPadding(new Insets(35, 40, 35, 40)); 
         card.setMaxWidth(500); 
         card.setAlignment(Pos.CENTER);
         card.setStyle("-fx-background-color: " + AppStyle.TOSKA_COLOR + "; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
+
 
         // === JUDUL ===
         Label title = new Label("Hitung Gaji Karyawan");
@@ -47,6 +49,7 @@ public class HitungGajiSc {
             title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;");
         }
         VBox.setMargin(title, new Insets(0, 0, 35, 0));
+
 
         KaryawanRepo karyawanRepo = new KaryawanRepo();
         GajiRepo gRepo = new GajiRepo();
@@ -62,6 +65,8 @@ public class HitungGajiSc {
         grid.setHgap(20);
         grid.setAlignment(Pos.CENTER);
 
+        // === INPUTAN ===
+        // Karyawan
         Label lblKaryawan = new Label("Karyawan:");
         lblKaryawan.setStyle("-fx-text-fill: white;"); 
         ComboBox<String> cbKaryawan = new ComboBox<>(FXCollections.observableArrayList(displayList));
@@ -70,6 +75,7 @@ public class HitungGajiSc {
 
         kustomisasiComboBox(cbKaryawan);
 
+        // Periode
         Label lblPeriode = new Label("Periode:");
         lblPeriode.setStyle("-fx-text-fill: white;");
         TextField periode = new TextField();
@@ -81,6 +87,7 @@ public class HitungGajiSc {
         grid.add(lblPeriode, 0, 1);
         grid.add(periode, 1, 1);
 
+
         VBox formContainer = new VBox(10);
         formContainer.setAlignment(Pos.CENTER); 
 
@@ -90,6 +97,7 @@ public class HitungGajiSc {
         btnHitung.setStyle("-fx-background-color: " + AppStyle.LIGHTGREEN_COLOR + 
                            "; -fx-text-fill: black; -fx-background-radius: 5; -fx-padding: 12; -fx-font-weight: bold; -fx-cursor: hand;");
 
+        // === SET ACTION ===
         cbKaryawan.setOnAction(e -> {
             formContainer.getChildren().clear();
             int idx = cbKaryawan.getSelectionModel().getSelectedIndex();
@@ -117,6 +125,7 @@ public class HitungGajiSc {
         btnHitung.setOnAction(e -> {
             int idx = cbKaryawan.getSelectionModel().getSelectedIndex();
             
+            // === ALERT ===
             if (idx < 0) {
                 tampilkanAlert(Alert.AlertType.WARNING, "Silakan pilih karyawan terlebih dahulu.");
                 return;
@@ -126,16 +135,12 @@ public class HitungGajiSc {
                 return;
             }
 
+            // MENGHITUNG
             Karyawan karyawan = daftarKaryawan.get(idx);
             double gajiBersih = 0;
             double tunjangan_kesehatan = 0;
-            double potIzin = 0, potAlfa = 0;
             double bonus_badge = 0;
-            double bonus_lembur = 0;
-            StringBuilder kategori_bonus = new StringBuilder();
             int izin = 0, alfa = 0, lembur = 0, jamKerja = 0;
-            double penghasilan = 0;
-            double potongan = 0;
 
             try {
                 if (karyawan instanceof KaryawanTetap) {
@@ -146,15 +151,11 @@ public class HitungGajiSc {
                     double gajiPokok = karyawanRepo.getGajiPokok(karyawan.getId());
                     tunjangan_kesehatan = 300000;
                     
-                    if (lembur >= 5) { bonus_badge += 150000; kategori_bonus.append("\nSuper Productive 🔥"); }
-                    if (alfa == 0 && izin == 0) { bonus_badge += 100000; kategori_bonus.append("\nDiscipline Master 👑"); }
-                    
-                    bonus_lembur = lembur * 100000;
-                    potIzin = izin * 150000;
-                    potAlfa = alfa * 75000;
+                    if (lembur >= 5) bonus_badge += 150000;                 // Super Productive 🔥
+                    if (alfa == 0 && izin == 0) bonus_badge += 100000;     // Discipline Master 👑
 
-                    penghasilan = gajiPokok + tunjangan_kesehatan + bonus_lembur + bonus_badge;
-                    potongan = potAlfa + potIzin;
+                    double penghasilan = gajiPokok + tunjangan_kesehatan + (lembur * 100000) + bonus_badge;
+                    double potongan = (alfa * 75000) + (izin * 150000);
                     gajiBersih = penghasilan - potongan;
 
                     ((TextField)formContainer.getChildren().get(1)).setText("0");
@@ -163,7 +164,7 @@ public class HitungGajiSc {
 
                 } else {
                     jamKerja = Integer.parseInt(((TextField)formContainer.getChildren().get(1)).getText());
-                    gajiBersih = penghasilan = jamKerja * 30000; 
+                    gajiBersih = jamKerja * 30000; 
                     
                     ((TextField)formContainer.getChildren().get(1)).setText("0");
                 }
