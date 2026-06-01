@@ -118,4 +118,21 @@ public class KaryawanRepo {
         } catch (SQLException e) { e.printStackTrace(); }
         return 0;
     }
+
+    // ===== CEK APAKAH ID SUDAH ADA =====
+    public boolean apakahIdSudahAda(String id) {
+        String sql = "SELECT COUNT(*) FROM karyawan WHERE id = ?";
+        try (Connection conn = KoneksiDatabase.sambung();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

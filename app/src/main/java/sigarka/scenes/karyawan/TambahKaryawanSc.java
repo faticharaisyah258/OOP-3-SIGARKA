@@ -114,6 +114,13 @@ public class TambahKaryawanSc {
 
             // simpan ke database kRepo
             KaryawanRepo repo = new KaryawanRepo();
+
+            // VALIDASI ID DUPLIKAT
+            if (repo.apakahIdSudahAda(id_karyawan)) {
+                tampilkanAlert(Alert.AlertType.ERROR, "ID Karyawan '" + id_karyawan + "' sudah terdaftar!");
+                return;
+            }
+
             double gajiPokok = 0;
             double tarif = 0;
             
