@@ -30,7 +30,7 @@ public class HapusKaryawanSc {
         btnNoNode.setStyle("-fx-background-color: " + AppStyle.LIGHTGREEN_COLOR + "; -fx-text-fill: " + AppStyle.NOTSOBLACK_COLOR + "; -fx-cursor: hand;");
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
+        if (result.isPresent() && result.get() == btnYes) {
             KaryawanRepo repo = new KaryawanRepo();
             repo.hapus(id);
             return true;
